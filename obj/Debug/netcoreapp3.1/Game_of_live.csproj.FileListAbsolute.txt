@@ -1,0 +1,17 @@
+C:\Users\schulung01\source\repos\Game_of_live\bin\Debug\netcoreapp3.1\Game_of_live.exe
+C:\Users\schulung01\source\repos\Game_of_live\bin\Debug\netcoreapp3.1\Game_of_live.deps.json
+C:\Users\schulung01\source\repos\Game_of_live\bin\Debug\netcoreapp3.1\Game_of_live.runtimeconfig.json
+C:\Users\schulung01\source\repos\Game_of_live\bin\Debug\netcoreapp3.1\Game_of_live.runtimeconfig.dev.json
+C:\Users\schulung01\source\repos\Game_of_live\bin\Debug\netcoreapp3.1\Game_of_live.dll
+C:\Users\schulung01\source\repos\Game_of_live\bin\Debug\netcoreapp3.1\Game_of_live.pdb
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.csproj.AssemblyReference.cache
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.csproj.GenerateResource.cache
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.AssemblyInfoInputs.cache
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.AssemblyInfo.cs
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.csproj.CoreCompileInputs.cache
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.dll
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.pdb
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.genruntimeconfig.cache
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.Properties.Resources.resources
+C:\Users\schulung01\source\repos\Game_of_live\obj\Debug\netcoreapp3.1\Game_of_live.Form1.resources

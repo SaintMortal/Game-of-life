@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Windows.Forms;using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Game_of_live
 {
@@ -38,10 +30,10 @@ namespace Game_of_live
                     Cell myseccell = new Cell();
                     cells[j, i] = myCell;
                     cellssec[j, i] = myseccell;
-                    myCell.myButton.Location = new System.Drawing.Point(i * 21, 21 * j);
-                    myCell.myButton.Text = Convert.ToString(cells[j, i]);
-                    myCell.myButton.Tag = cells[j, i];
-                    Controls.Add(myCell.myButton);
+                    myCell.PicturesBox.Location = new System.Drawing.Point(i * 21, 21 * j);
+                    myCell.PicturesBox.Text = Convert.ToString(cells[j, i]);
+                    myCell.PicturesBox.Tag = cells[j, i];
+                    Controls.Add(myCell.PicturesBox);
                 }
             }
         }
@@ -102,10 +94,10 @@ namespace Game_of_live
                     for (int c = 0; c < mapSize; c++)
                     {
                         cells[l, c].life = cellssec[l, c].life;
-                        cells[l, c].colorchange();
+                        cells[l, c].Colorchange();
                         if (cells[l, c].life)
                         {
-                            label1.Text = "LIfe: " + Convert.ToString(glifecounter += 1);
+                            ScoreLabel.Text = "LIfe: " + Convert.ToString(glifecounter += 1);
                         }
                     }
 
@@ -146,7 +138,7 @@ namespace Game_of_live
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            delayUI = trackBar1.Value;
+            delayUI = SpeedSlider.Value;
         }
     }
 }

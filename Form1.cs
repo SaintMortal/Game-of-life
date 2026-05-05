@@ -1,144 +1,142 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Forms;using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Windows.Forms;
 
 namespace Game_of_live
 {
 
     public partial class Form1 : Form
     {
-        const int mapSize = 50;
-        Cell[,] cells = new Cell[mapSize, mapSize];
-        Cell[,] cellssec = new Cell[mapSize, mapSize];
-        bool playgame = false;
+        private Cell[,] cells = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
+        private Cell[,] buffer = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
+        bool isPlayingGame = false;
         int glifecounter = 0;
-        int delayUI = 0;
+
         public Form1()
         {
             InitializeComponent();
-            initialize();
+            Initialize();
         }
 
 
-        public void initialize()
+        public void Initialize()
         {
-            for (int j = 0; j < mapSize; j++)
+            for (int i = 0; i < Constants.MAP_SIZE; i++)
             {
-                for (int i = 0; i < mapSize; i++)
+                for (int j = 0; j < Constants.MAP_SIZE; j++)
                 {
-                    Cell myCell = new Cell();
-                    Cell myseccell = new Cell();
-                    cells[j, i] = myCell;
-                    cellssec[j, i] = myseccell;
-                    myCell.PicturesBox.Location = new System.Drawing.Point(i * 21, 21 * j);
-                    myCell.PicturesBox.Text = Convert.ToString(cells[j, i]);
-                    myCell.PicturesBox.Tag = cells[j, i];
-                    Controls.Add(myCell.PicturesBox);
+                    Cell cell = new Cell();
+                    Cell bufferCell = new Cell();
+                    cells[i, j] = cell;
+                    buffer[i, j] = bufferCell;
+                    cell.PicturesBox.Location = new System.Drawing.Point(j * Constants.CELL_SPACING, Constants.CELL_SPACING * i);
+                    Controls.Add(cell.PicturesBox);
                 }
             }
         }
 
-        public async void cellupdate()
+        public async void HandleCellUpdate()
         {
 
             do
             {
+                UpdateCells();
+                await Task.Delay(SpeedSlider.Value);
+            }
+            while (isPlayingGame);
+        }
 
-                for (int y = 0; y < mapSize; y++)
+        private void UpdateCells()
+        {
+            for (int x = 0; x < Constants.MAP_SIZE; x++)
+            {
+                for (int y = 0; y < Constants.MAP_SIZE; y++)
                 {
-                    for (int x = 0; x < mapSize; x++)
+
+                    int lifeCounter = 0;
+                    Cell currentBufferCell = buffer[x, y];
+                    Cell currentCell = cells[x, y];
+
+                    for (int i = -1; i <= 1; i++)
                     {
-
-                        int lifeCounter = 0;
-
-                        Cell nextstep = cellssec[y, x];
-
-                        for (int i = -1; i <= 1; i++)
+                        for (int j = -1; j <= 1; j++)
                         {
-                            for (int j = -1; j <= 1; j++)
+                            if (!(i == 0 && j == 0))
                             {
-                                if (!(i == 0 && j == 0))
-                                {
 
-                                    int neigborY = y + i;
-                                    int neigborX = x + j;
-                                    if (neigborY >= 0 && neigborY <= mapSize - 1 && neigborX >= 0 && neigborX <= mapSize - 1)
+                                int neighborX = x + i;
+                                int neighborY = y + j;
+                                if (neighborX >= 0 && neighborX <= Constants.MAP_SIZE - 1 && neighborY >= 0 && neighborY <= Constants.MAP_SIZE - 1)
+                                {
+                                    Cell neighborCell = cells[neighborX, neighborY];
+                                    if (neighborCell.life)
                                     {
-                                        Cell neightborcell = cells[neigborY, neigborX];
-                                        if (neightborcell.life)                  
-                                        {
-                                            lifeCounter += 1;
-                                        }
+                                        lifeCounter += 1;
                                     }
                                 }
                             }
                         }
-                        if (lifeCounter > 3 || lifeCounter < 2)    //2) Normale regeln
-                        {
-                            nextstep.life = false;
-                        }
-                        else if (lifeCounter == 2 && cells[y, x].life)
-                        {
-                            nextstep.life = true;
-                        }
-                        else if (lifeCounter == 3)
-                        {
-                            nextstep.life = true;
-                        }
                     }
 
-                }
-
-                for (int l = 0; l < mapSize; l++)
-                {
-                    for (int c = 0; c < mapSize; c++)
+                    if (lifeCounter > Constants.MAX_NEIGHBORS_TO_SURVIVE || lifeCounter < Constants.MIN_NEIGHBORS_TO_SURVIVE)
                     {
-                        cells[l, c].life = cellssec[l, c].life;
-                        cells[l, c].Colorchange();
-                        if (cells[l, c].life)
-                        {
-                            ScoreLabel.Text = "LIfe: " + Convert.ToString(glifecounter += 1);
-                        }
+                        currentBufferCell.life = false;
                     }
-
+                    else if (lifeCounter == Constants.MIN_NEIGHBORS_TO_SURVIVE && currentCell.life)
+                    {
+                        currentBufferCell.life = true;
+                    }
+                    else if (lifeCounter == Constants.NEIGHBORS_TO_BIRTH)
+                    {
+                        currentBufferCell.life = true;
+                    }
                 }
-                glifecounter = 0;
 
-
-                await Task.Delay(delayUI);
             }
-            while (playgame);
+
+            bool hasActiveCell = false;
+
+            for (int l = 0; l < Constants.MAP_SIZE; l++)
+            {
+                for (int c = 0; c < Constants.MAP_SIZE; c++)
+                {
+                    cells[l, c].life = buffer[l, c].life;
+                    bool isInLife = cells[l, c].life;
+                    cells[l, c].Colorchange();
+                    if (isInLife)
+                    {
+                        hasActiveCell = true;
+                        ScoreLabel.Text = "LIfe: " + Convert.ToString(glifecounter += 1);
+                    }
+                }
+            }
+
+            if (!hasActiveCell)
+            {
+                ScoreLabel.Text = "Has no life!";
+            }
+
+            glifecounter = 0;
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            cellupdate();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
+            UpdateCells();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (!playgame)
+            if (!isPlayingGame)
             {
-                playgame = true;
-                cellupdate();
+                isPlayingGame = true;
+                HandleCellUpdate();
+                LoopTriger.Text = "Stop";
             }
             else
             {
-                playgame = false;
+                isPlayingGame = false;
+                LoopTriger.Text = "Start";
             }
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-            delayUI = SpeedSlider.Value;
         }
     }
 }

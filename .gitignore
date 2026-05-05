@@ -1,0 +1,68 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache/options
+.vs/
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Logs
+*.log
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# OS files
+Desktop.ini
+
+# NuGet
+*.nupkg
+packages/
+!packages/build/
+*.snupkg
+
+# .NET Core / .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish output
+publish/
+
+# IIS Express
+.vs/
+*.config.user
+
+# Debug files
+*.pdb
+*.mdb
+
+# Resharper
+*.resharper
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup & old files
+*.bak
+*.old
+
+# Visual Studio Code (falls genutzt)
+.vscode/
+
+# JetBrains Rider
+.idea/
+
+# Test results
+TestResults/

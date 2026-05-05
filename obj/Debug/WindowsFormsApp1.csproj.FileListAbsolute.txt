@@ -16,3 +16,14 @@ C:\Users\SaintMortal\Desktop\gameoflife\obj\Debug\WindowsFormsApp1.csproj.Genera
 C:\Users\SaintMortal\Desktop\gameoflife\obj\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache
 C:\Users\SaintMortal\Desktop\gameoflife\obj\Debug\WindowsFormsApp1.exe
 C:\Users\SaintMortal\Desktop\gameoflife\obj\Debug\WindowsFormsApp1.pdb
+C:\Users\njerinic\Desktop\Game-of-life\bin\Debug\WindowsFormsApp1.exe.config
+C:\Users\njerinic\Desktop\Game-of-life\bin\Debug\WindowsFormsApp1.exe
+C:\Users\njerinic\Desktop\Game-of-life\bin\Debug\WindowsFormsApp1.pdb
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.csproj.AssemblyReference.cache
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.exe.config
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.csproj.GenerateResource.cache
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.exe
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\WindowsFormsApp1.pdb
+C:\Users\njerinic\Desktop\Game-of-life\obj\Debug\Game_of_live.Form1.resources

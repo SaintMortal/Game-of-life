@@ -13,7 +13,7 @@ namespace Game_of_live
         {
             PicturesBox = new PictureBox();
             life = false;
-            PicturesBox.Size = new System.Drawing.Size(20, 20);
+            PicturesBox.Size = new System.Drawing.Size(Constants.CELL_SIZE, Constants.CELL_SIZE);
             PicturesBox.Click += Clickn;
             PicturesBox.BackColor = System.Drawing.Color.Black;
         }
@@ -37,9 +37,6 @@ namespace Game_of_live
 
         public void Colorchange()
         {
-            if (!life)
-            {
-            }
 
             if (life)
             {

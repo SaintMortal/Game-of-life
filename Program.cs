@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Game_of_live;
+using System;
 using System.Windows.Forms;
-using Game_of_live;
 
 namespace WindowsFormsApp1
 {

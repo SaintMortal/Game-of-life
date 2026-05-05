@@ -123,6 +123,17 @@ namespace Game_of_live
         {
             UpdateCells();
         }
+        private void ResetHandle_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < Constants.MAP_SIZE; i++)
+            {
+                for (int j = 0; j < Constants.MAP_SIZE; j++)
+                {
+                    cells[i, j].life = false;
+                    cells[i, j].Colorchange();
+                }
+            }
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -137,6 +148,11 @@ namespace Game_of_live
                 isPlayingGame = false;
                 LoopTriger.Text = "Start";
             }
+        }
+
+        private void CloseOpenPanelHandle_Click(object sender, EventArgs e)
+        {
+            UiConteiner.Visible = !UiConteiner.Visible;
         }
     }
 }

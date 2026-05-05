@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
 
 namespace Game_of_live
 {
@@ -153,6 +157,40 @@ namespace Game_of_live
         private void CloseOpenPanelHandle_Click(object sender, EventArgs e)
         {
             UiConteiner.Visible = !UiConteiner.Visible;
+        }
+        private void Save_Click(object sender, EventArgs e)
+        {
+            var liveCells = new List<Cell>();
+            for (int i = 0; i < Constants.MAP_SIZE; i++)
+            {
+                for (int j = 0; j < Constants.MAP_SIZE; j++)
+                {
+                    if (cells[i, j].life)
+                    {
+                        liveCells.Add(new Cell
+                        {
+                            x = i,
+                            y = j,
+                            life = true
+                        });
+                    }
+                }
+            }
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            string jsonString = JsonSerializer.Serialize(liveCells, options);
+
+            string filePath = Path.Combine("user.json");
+            try
+            {
+                File.WriteAllText(filePath, jsonString);
+                MessageBox.Show("Save date " + Path.GetFullPath(filePath));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error " + ex.Message);
+            }
         }
     }
 }

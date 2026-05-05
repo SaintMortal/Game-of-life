@@ -6,8 +6,10 @@ namespace Game_of_live
     public class Cell
     {
         public PictureBox PicturesBox;
-        public bool life;
+        public bool life { get; set; }
         bool first = true;
+        public int x { get; set; }
+        public int y { get; set; }
 
         public Cell()
         {

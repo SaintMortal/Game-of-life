@@ -37,6 +37,7 @@ namespace Game_of_live
             this.SpeedSlider = new System.Windows.Forms.TrackBar();
             this.NextStephandle = new System.Windows.Forms.Button();
             this.ResetHandle = new System.Windows.Forms.Button();
+            this.Save = new System.Windows.Forms.Button();
             this.UiConteiner.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SpeedSlider)).BeginInit();
             this.SuspendLayout();
@@ -56,6 +57,7 @@ namespace Game_of_live
             // 
             this.UiConteiner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.UiConteiner.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.UiConteiner.Controls.Add(this.Save);
             this.UiConteiner.Controls.Add(this.ResetHandle);
             this.UiConteiner.Controls.Add(this.NextStephandle);
             this.UiConteiner.Controls.Add(this.SpeedSlider);
@@ -63,7 +65,7 @@ namespace Game_of_live
             this.UiConteiner.Controls.Add(this.LoopTriger);
             this.UiConteiner.Location = new System.Drawing.Point(834, 51);
             this.UiConteiner.Name = "UiConteiner";
-            this.UiConteiner.Size = new System.Drawing.Size(184, 119);
+            this.UiConteiner.Size = new System.Drawing.Size(184, 171);
             this.UiConteiner.TabIndex = 5;
             this.UiConteiner.Visible = false;
             // 
@@ -74,7 +76,7 @@ namespace Game_of_live
             this.LoopTriger.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.LoopTriger.FlatAppearance.BorderSize = 0;
             this.LoopTriger.ForeColor = System.Drawing.Color.Black;
-            this.LoopTriger.Location = new System.Drawing.Point(115, 55);
+            this.LoopTriger.Location = new System.Drawing.Point(115, 82);
             this.LoopTriger.Name = "LoopTriger";
             this.LoopTriger.Size = new System.Drawing.Size(64, 20);
             this.LoopTriger.TabIndex = 2;
@@ -87,7 +89,7 @@ namespace Game_of_live
             // 
             this.ScoreLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ScoreLabel.AutoSize = true;
-            this.ScoreLabel.Location = new System.Drawing.Point(137, 94);
+            this.ScoreLabel.Location = new System.Drawing.Point(137, 121);
             this.ScoreLabel.Name = "ScoreLabel";
             this.ScoreLabel.Size = new System.Drawing.Size(40, 13);
             this.ScoreLabel.TabIndex = 1;
@@ -109,7 +111,7 @@ namespace Game_of_live
             // 
             this.NextStephandle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.NextStephandle.BackColor = System.Drawing.Color.White;
-            this.NextStephandle.Location = new System.Drawing.Point(115, 29);
+            this.NextStephandle.Location = new System.Drawing.Point(115, 56);
             this.NextStephandle.Name = "NextStephandle";
             this.NextStephandle.Size = new System.Drawing.Size(64, 20);
             this.NextStephandle.TabIndex = 0;
@@ -123,7 +125,7 @@ namespace Game_of_live
             this.ResetHandle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ResetHandle.BackColor = System.Drawing.Color.White;
             this.ResetHandle.ImageAlign = System.Drawing.ContentAlignment.TopRight;
-            this.ResetHandle.Location = new System.Drawing.Point(115, 3);
+            this.ResetHandle.Location = new System.Drawing.Point(115, 30);
             this.ResetHandle.Name = "ResetHandle";
             this.ResetHandle.Size = new System.Drawing.Size(64, 20);
             this.ResetHandle.TabIndex = 4;
@@ -131,6 +133,20 @@ namespace Game_of_live
             this.ResetHandle.Text = "Reset";
             this.ResetHandle.UseVisualStyleBackColor = false;
             this.ResetHandle.Click += new System.EventHandler(this.ResetHandle_Click);
+            // 
+            // Save
+            // 
+            this.Save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Save.BackColor = System.Drawing.Color.White;
+            this.Save.ImageAlign = System.Drawing.ContentAlignment.TopRight;
+            this.Save.Location = new System.Drawing.Point(115, 4);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(64, 20);
+            this.Save.TabIndex = 5;
+            this.Save.Tag = "1";
+            this.Save.Text = "Save\r\n";
+            this.Save.UseVisualStyleBackColor = false;
+            this.Save.Click += new System.EventHandler(this.Save_Click);
             // 
             // Form1
             // 
@@ -157,5 +173,6 @@ namespace Game_of_live
         private System.Windows.Forms.TrackBar SpeedSlider;
         private System.Windows.Forms.Label ScoreLabel;
         private System.Windows.Forms.Button LoopTriger;
+        private System.Windows.Forms.Button Save;
     }
 }

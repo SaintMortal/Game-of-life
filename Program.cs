@@ -1,4 +1,4 @@
-﻿using Game_of_live;
+﻿using GameOfLife;
 using System;
 using System.Windows.Forms;
 

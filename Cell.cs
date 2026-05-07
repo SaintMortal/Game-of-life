@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Game_of_live
+namespace GameOfLife
 {
     public class Cell
     {

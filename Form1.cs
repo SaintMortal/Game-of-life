@@ -1,27 +1,69 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Linq;
+using WindowsFormsApp1.Properties;
 
-namespace Game_of_live
+namespace GameOfLife
 {
 
     public partial class Form1 : Form
     {
         private Cell[,] cells = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
         private Cell[,] buffer = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
+
+        private List<Pattern> patterns = new List<Pattern>();
+
         bool isPlayingGame = false;
         int glifecounter = 0;
 
         public Form1()
         {
+            try
+            {
+                if (!File.Exists(Constants.PATTERNS_JSON_FILE))
+                {
+                    var emptyPatternList = new JsonObject
+                    {
+                        ["patterns"] = new JsonArray()
+                    };
+
+                    string emptyPatternsListJson = JsonSerializer.Serialize(
+                    emptyPatternList,
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+                    File.WriteAllText(Constants.PATTERNS_JSON_FILE, emptyPatternsListJson);
+                }
+                else
+                {
+                    var patternJsonBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
+                    var reader = new Utf8JsonReader(patternJsonBytes);
+                    string json = File.ReadAllText(Constants.PATTERNS_JSON_FILE);
+
+                    List<Pattern> patterns = JsonSerializer.Deserialize<List<Pattern>>(json);
+                    comboBox1.Items.Add(patterns[0].name);
+                    MessageBox.Show(patternJsonBytes.ToString());
+                    MessageBox.Show("The pattern is loaded!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("The pattern is dloaded!");
+                Debug.WriteLine("Error accessing patterns JSON file" + ex.Message);
+            }
+
             InitializeComponent();
             Initialize();
         }
-
 
         public void Initialize()
         {
@@ -33,7 +75,7 @@ namespace Game_of_live
                     Cell bufferCell = new Cell();
                     cells[i, j] = cell;
                     buffer[i, j] = bufferCell;
-                    cell.PicturesBox.Location = new System.Drawing.Point(j * Constants.CELL_SPACING, Constants.CELL_SPACING * i);
+                    cell.PicturesBox.Location = new Point(j * Constants.CELL_SPACING, Constants.CELL_SPACING * i);
                     Controls.Add(cell.PicturesBox);
                 }
             }
@@ -157,40 +199,87 @@ namespace Game_of_live
         private void CloseOpenPanelHandle_Click(object sender, EventArgs e)
         {
             UiConteiner.Visible = !UiConteiner.Visible;
+
+            if (UiConteiner.Visible)
+            {
+
+                var bitmapCloseMenu = new Bitmap(Resources.close);
+
+                var bitmapCloseMenuResized = new Bitmap(bitmapCloseMenu, new Size(16, 16));
+                CloseOpenPanelHandle.Image = bitmapCloseMenuResized;
+            }
+            else
+            {
+                var bitmapHamburgerMenu = new Bitmap(Resources.hamburger_menu);
+
+                var bitmapHamburgerMenuResized = new Bitmap(bitmapHamburgerMenu, new Size(20, 20));
+                CloseOpenPanelHandle.Image = bitmapHamburgerMenuResized;
+            }
         }
         private void Save_Click(object sender, EventArgs e)
         {
-            var liveCells = new List<Cell>();
-            for (int i = 0; i < Constants.MAP_SIZE; i++)
+            var patterns = new List<Pattern>()
             {
-                for (int j = 0; j < Constants.MAP_SIZE; j++)
+                new Pattern() {
+                id = 1,
+                name = "My Pattern"
+                }
+            };
+
+            for (int x = 0; x < Constants.MAP_SIZE; x++)
+            {
+                for (int y = 0; y < Constants.MAP_SIZE; y++)
                 {
-                    if (cells[i, j].life)
+                    foreach (Pattern pattern in patterns)
                     {
-                        liveCells.Add(new Cell
+                        if (cells[x, y].life)
                         {
-                            x = i,
-                            y = j,
-                            life = true
-                        });
+                            // erst die korrektes Pattern finden und dann lebendige zellen da speichern
+                            pattern.Cells.Add(new Cell
+                            {
+                                x = x,
+                                y = y,
+                                life = true
+                            });
+                        }
                     }
                 }
             }
 
             var options = new JsonSerializerOptions { WriteIndented = true };
 
-            string jsonString = JsonSerializer.Serialize(liveCells, options);
+            string jsonString = JsonSerializer.Serialize(patterns, options);
 
-            string filePath = Path.Combine("user.json");
             try
             {
-                File.WriteAllText(filePath, jsonString);
-                MessageBox.Show("Save date " + Path.GetFullPath(filePath));
+                File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
+                MessageBox.Show("The pattern is saved!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error " + ex.Message);
+                Console.WriteLine("Error saving a pattern");
+                Debug.WriteLine("Error saving a pattern: " + ex.Message);
+                MessageBox.Show("Error saving a pattern!");
             }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void LoadHandle_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var fileBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
+                var reader = new Utf8JsonReader(fileBytes);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
         }
     }
 }

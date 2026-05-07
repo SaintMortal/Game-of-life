@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Dynamic;
 using System.IO;
@@ -17,14 +18,16 @@ namespace GameOfLife
     {
         private Cell[,] cells = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
         private Cell[,] buffer = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
-
-        private List<Pattern> patterns = new List<Pattern>();
+        List<Pattern> patterns = new List<Pattern>();
+        private int GlobalId = 1;
 
         bool isPlayingGame = false;
         int glifecounter = 0;
 
         public Form1()
         {
+            InitializeComponent();
+            Initialize();
             try
             {
                 if (!File.Exists(Constants.PATTERNS_JSON_FILE))
@@ -48,21 +51,23 @@ namespace GameOfLife
                     var reader = new Utf8JsonReader(patternJsonBytes);
                     string json = File.ReadAllText(Constants.PATTERNS_JSON_FILE);
 
-                    List<Pattern> patterns = JsonSerializer.Deserialize<List<Pattern>>(json);
-                    comboBox1.Items.Add(patterns[0].name);
-                    MessageBox.Show(patternJsonBytes.ToString());
+                    patterns = JsonSerializer.Deserialize<List<Pattern>>(json);
+                    foreach (Pattern pattern in patterns)
+                    {
+                        if(GlobalId < pattern.id)
+                        {
+                        GlobalId = pattern.id;
+                        }
+                    comboBox1.Items.Add(pattern.name);
+                    }
                     MessageBox.Show("The pattern is loaded!");
                 }
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show("The pattern is dloaded!");
                 Debug.WriteLine("Error accessing patterns JSON file" + ex.Message);
             }
-
-            InitializeComponent();
-            Initialize();
         }
 
         public void Initialize()
@@ -218,50 +223,61 @@ namespace GameOfLife
         }
         private void Save_Click(object sender, EventArgs e)
         {
-            var patterns = new List<Pattern>()
+            if(comboBox1.Text != "")
             {
-                new Pattern() {
-                id = 1,
-                name = "My Pattern"
-                }
-            };
 
+
+                patterns.Add(new Pattern
+                {
+                    id = ++GlobalId,
+                    name = comboBox1.Text,
+                    Cells = new List<Cell>()
+                });
+                Pattern lastPattern = patterns.FindLast(p => true);
+            comboBox1.Items.Add(lastPattern.name);
             for (int x = 0; x < Constants.MAP_SIZE; x++)
             {
                 for (int y = 0; y < Constants.MAP_SIZE; y++)
                 {
-                    foreach (Pattern pattern in patterns)
-                    {
+                    
                         if (cells[x, y].life)
                         {
                             // erst die korrektes Pattern finden und dann lebendige zellen da speichern
-                            pattern.Cells.Add(new Cell
+                            lastPattern.Cells.Add(new Cell
                             {
                                 x = x,
                                 y = y,
                                 life = true
                             });
                         }
-                    }
+                    
                 }
             }
+        
+                
 
-            var options = new JsonSerializerOptions { WriteIndented = true };
+                var options = new JsonSerializerOptions { WriteIndented = true };
 
-            string jsonString = JsonSerializer.Serialize(patterns, options);
+                string jsonString = JsonSerializer.Serialize(patterns, options);
 
-            try
-            {
-                File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
-                MessageBox.Show("The pattern is saved!");
+                try
+                {
+                    File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
+                    MessageBox.Show("The pattern is saved!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error saving a pattern");
+                    Debug.WriteLine("Error saving a pattern: " + ex.Message);
+                    MessageBox.Show("Error saving a pattern!");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine("Error saving a pattern");
-                Debug.WriteLine("Error saving a pattern: " + ex.Message);
-                MessageBox.Show("Error saving a pattern!");
+                MessageBox.Show("Befor save your pattern it need have name");
             }
         }
+        
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {

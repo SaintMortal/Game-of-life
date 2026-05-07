@@ -2,7 +2,7 @@
 
     namespace GameOfLife
     {
-        internal class Pattern
+        public class Pattern
         {
             public int id { get; set; }
             public string name { get; set; } = string.Empty;

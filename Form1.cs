@@ -86,6 +86,20 @@ namespace GameOfLife
             }
         }
 
+        public void InitializeThePattern(Pattern initThePattern)
+        {
+            for (int i = 0; i < Constants.MAP_SIZE; i++)
+            {
+                for (int j = 0; j < Constants.MAP_SIZE; j++)
+                {
+                    if (initThePattern.Cells.Exists(cellLife => cellLife.x == i && cellLife.y == j))
+                    {
+                        cells[i, j].life = true;
+                        cells[i, j].Colorchange();
+                    }
+                }
+            }
+        }
         public async void HandleCellUpdate()
         {
 
@@ -176,6 +190,11 @@ namespace GameOfLife
         }
         private void ResetHandle_Click(object sender, EventArgs e)
         {
+            ResetThePlayground();
+        }
+
+        private void ResetThePlayground()
+        {
             for (int i = 0; i < Constants.MAP_SIZE; i++)
             {
                 for (int j = 0; j < Constants.MAP_SIZE; j++)
@@ -223,14 +242,14 @@ namespace GameOfLife
         }
         private void Save_Click(object sender, EventArgs e)
         {
-            if(comboBox1.Text != "")
+            if(InputFormForNaming.Text != "")
             {
 
 
                 patterns.Add(new Pattern
                 {
                     id = ++GlobalId,
-                    name = comboBox1.Text,
+                    name = InputFormForNaming.Text,
                     Cells = new List<Cell>()
                 });
                 Pattern lastPattern = patterns.FindLast(p => true);
@@ -285,6 +304,14 @@ namespace GameOfLife
 
         private void LoadHandle_Click(object sender, EventArgs e)
         {
+            ResetThePlayground();
+            foreach (Pattern pattern in patterns)
+            {
+                if (pattern.name == comboBox1.SelectedItem.ToString())
+                {
+                    InitializeThePattern(pattern);
+                }
+            }
             try
             {
                 var fileBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
@@ -297,5 +324,6 @@ namespace GameOfLife
             }
 
         }
+
     }
 }

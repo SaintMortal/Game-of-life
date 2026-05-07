@@ -1,4 +1,4 @@
-namespace Game_of_live
+namespace GameOfLife
 {
     public static class Constants
     {
@@ -14,5 +14,6 @@ namespace Game_of_live
         public const int MIN_NEIGHBORS_TO_SURVIVE = 2;
         public const int MAX_NEIGHBORS_TO_SURVIVE = 3;
         public const int NEIGHBORS_TO_BIRTH = 3;
+        public const string PATTERNS_JSON_FILE = "patterns.json";
     }
 }

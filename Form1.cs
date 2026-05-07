@@ -1,14 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
+using System.Dynamic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApp1.Properties;
 
-namespace Game_of_live
+namespace GameOfLife
 {
 
     public partial class Form1 : Form
     {
         private Cell[,] cells = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
         private Cell[,] buffer = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
+        List<Pattern> patterns = new List<Pattern>();
+        private int GlobalId = 1;
+
         bool isPlayingGame = false;
         int glifecounter = 0;
 
@@ -16,8 +28,47 @@ namespace Game_of_live
         {
             InitializeComponent();
             Initialize();
-        }
+            try
+            {
+                if (!File.Exists(Constants.PATTERNS_JSON_FILE))
+                {
+                    var emptyPatternList = new JsonObject
+                    {
+                        ["patterns"] = new JsonArray()
+                    };
 
+                    string emptyPatternsListJson = JsonSerializer.Serialize(
+                    emptyPatternList,
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
+                    File.WriteAllText(Constants.PATTERNS_JSON_FILE, emptyPatternsListJson);
+                }
+                else
+                {
+                    var patternJsonBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
+                    var reader = new Utf8JsonReader(patternJsonBytes);
+                    string json = File.ReadAllText(Constants.PATTERNS_JSON_FILE);
+
+                    patterns = JsonSerializer.Deserialize<List<Pattern>>(json);
+                    foreach (Pattern pattern in patterns)
+                    {
+                        if(GlobalId < pattern.id)
+                        {
+                        GlobalId = pattern.id;
+                        }
+                    comboBox1.Items.Add(pattern.name);
+                    }
+                    MessageBox.Show("The pattern is loaded!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error accessing patterns JSON file" + ex.Message);
+            }
+        }
 
         public void Initialize()
         {
@@ -29,12 +80,26 @@ namespace Game_of_live
                     Cell bufferCell = new Cell();
                     cells[i, j] = cell;
                     buffer[i, j] = bufferCell;
-                    cell.PicturesBox.Location = new System.Drawing.Point(j * Constants.CELL_SPACING, Constants.CELL_SPACING * i);
+                    cell.PicturesBox.Location = new Point(j * Constants.CELL_SPACING, Constants.CELL_SPACING * i);
                     Controls.Add(cell.PicturesBox);
                 }
             }
         }
 
+        public void InitializeThePattern(Pattern initThePattern)
+        {
+            for (int i = 0; i < Constants.MAP_SIZE; i++)
+            {
+                for (int j = 0; j < Constants.MAP_SIZE; j++)
+                {
+                    if (initThePattern.Cells.Exists(cellLife => cellLife.x == i && cellLife.y == j))
+                    {
+                        cells[i, j].life = true;
+                        cells[i, j].Colorchange();
+                    }
+                }
+            }
+        }
         public async void HandleCellUpdate()
         {
 
@@ -123,6 +188,22 @@ namespace Game_of_live
         {
             UpdateCells();
         }
+        private void ResetHandle_Click(object sender, EventArgs e)
+        {
+            ResetThePlayground();
+        }
+
+        private void ResetThePlayground()
+        {
+            for (int i = 0; i < Constants.MAP_SIZE; i++)
+            {
+                for (int j = 0; j < Constants.MAP_SIZE; j++)
+                {
+                    cells[i, j].life = false;
+                    cells[i, j].Colorchange();
+                }
+            }
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -138,5 +219,106 @@ namespace Game_of_live
                 LoopTriger.Text = "Start";
             }
         }
+
+        private void CloseOpenPanelHandle_Click(object sender, EventArgs e)
+        {
+            UiConteiner.Visible = !UiConteiner.Visible;
+
+            if (UiConteiner.Visible)
+            {
+
+                var bitmapCloseMenu = new Bitmap(Resources.close);
+
+                var bitmapCloseMenuResized = new Bitmap(bitmapCloseMenu, new Size(16, 16));
+                CloseOpenPanelHandle.Image = bitmapCloseMenuResized;
+            }
+            else
+            {
+                var bitmapHamburgerMenu = new Bitmap(Resources.hamburger_menu);
+
+                var bitmapHamburgerMenuResized = new Bitmap(bitmapHamburgerMenu, new Size(20, 20));
+                CloseOpenPanelHandle.Image = bitmapHamburgerMenuResized;
+            }
+        }
+        private void Save_Click(object sender, EventArgs e)
+        {
+            if(InputFormForNaming.Text != "")
+            {
+
+
+                patterns.Add(new Pattern
+                {
+                    id = ++GlobalId,
+                    name = InputFormForNaming.Text,
+                    Cells = new List<Cell>()
+                });
+                Pattern lastPattern = patterns.FindLast(p => true);
+            comboBox1.Items.Add(lastPattern.name);
+            for (int x = 0; x < Constants.MAP_SIZE; x++)
+            {
+                for (int y = 0; y < Constants.MAP_SIZE; y++)
+                {
+                    
+                        if (cells[x, y].life)
+                        {
+                            // erst die korrektes Pattern finden und dann lebendige zellen da speichern
+                            lastPattern.Cells.Add(new Cell
+                            {
+                                x = x,
+                                y = y,
+                                life = true
+                            });
+                        }
+                    
+                }
+            }
+        
+                
+
+                var options = new JsonSerializerOptions { WriteIndented = true };
+
+                string jsonString = JsonSerializer.Serialize(patterns, options);
+
+                try
+                {
+                    File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
+                    MessageBox.Show("The pattern is saved!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error saving a pattern");
+                    Debug.WriteLine("Error saving a pattern: " + ex.Message);
+                    MessageBox.Show("Error saving a pattern!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Befor save your pattern it need have name");
+            }
+        }
+
+        private void LoadHandle_Click(object sender, EventArgs e)
+        {
+            ResetThePlayground();
+            foreach (Pattern pattern in patterns)
+            {
+                if (pattern.name == comboBox1.SelectedItem.ToString())
+                {
+                    InitializeThePattern(pattern);
+                }
+            }
+            try
+            {
+                var fileBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
+                var reader = new Utf8JsonReader(fileBytes);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
     }
 }

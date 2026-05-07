@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Game_of_live
+namespace GameOfLife
 {
     public class Cell
     {
         public PictureBox PicturesBox;
-        public bool life;
+        public bool life { get; set; }
         bool first = true;
+        public int x { get; set; }
+        public int y { get; set; }
 
         public Cell()
         {

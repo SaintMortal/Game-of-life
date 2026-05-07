@@ -296,11 +296,6 @@ namespace GameOfLife
                 MessageBox.Show("Befor save your pattern it need have name");
             }
         }
-        
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
 
         private void LoadHandle_Click(object sender, EventArgs e)
         {

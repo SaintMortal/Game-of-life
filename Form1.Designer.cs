@@ -8,7 +8,6 @@ namespace GameOfLife
 {
     partial class Form1
     {
-        private const int V = 10;
 
         /// <summary>
         ///  Required designer variable.

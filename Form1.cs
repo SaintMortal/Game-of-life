@@ -51,7 +51,10 @@ namespace GameOfLife
                     var reader = new Utf8JsonReader(patternJsonBytes);
                     string json = File.ReadAllText(Constants.PATTERNS_JSON_FILE);
 
-                    patterns = JsonSerializer.Deserialize<List<Pattern>>(json);
+                    JsonObject jsonObject = JsonNode.Parse(json).AsObject();
+
+                    patterns = jsonObject["patterns"]
+                        .Deserialize<List<Pattern>>() ?? new List<Pattern>();
                     foreach (Pattern pattern in patterns)
                     {
                         if(GlobalId < pattern.id)
@@ -68,7 +71,7 @@ namespace GameOfLife
             {
                 Debug.WriteLine("Error accessing patterns JSON file" + ex.Message);
             }
-        }
+        }   
 
         public void Initialize()
         {
@@ -242,26 +245,25 @@ namespace GameOfLife
         }
         private void Save_Click(object sender, EventArgs e)
         {
-            if(InputFormForNaming.Text != "")
+            if (InputFormForNaming.Text != "")
             {
-
-
                 patterns.Add(new Pattern
                 {
                     id = ++GlobalId,
                     name = InputFormForNaming.Text,
                     Cells = new List<Cell>()
                 });
+
                 Pattern lastPattern = patterns.FindLast(p => true);
-            comboBox1.Items.Add(lastPattern.name);
-            for (int x = 0; x < Constants.MAP_SIZE; x++)
-            {
-                for (int y = 0; y < Constants.MAP_SIZE; y++)
+
+                comboBox1.Items.Add(lastPattern.name);
+
+                for (int x = 0; x < Constants.MAP_SIZE; x++)
                 {
-                    
+                    for (int y = 0; y < Constants.MAP_SIZE; y++)
+                    {
                         if (cells[x, y].life)
                         {
-                            // erst die korrektes Pattern finden und dann lebendige zellen da speichern
                             lastPattern.Cells.Add(new Cell
                             {
                                 x = x,
@@ -269,31 +271,37 @@ namespace GameOfLife
                                 life = true
                             });
                         }
-                    
+                    }
                 }
-            }
-        
-                
 
-                var options = new JsonSerializerOptions { WriteIndented = true };
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
 
-                string jsonString = JsonSerializer.Serialize(patterns, options);
+                JsonObject jsonObject = new JsonObject
+                {
+                    ["patterns"] = JsonSerializer.SerializeToNode(patterns) 
+                };
+
+                string jsonString = jsonObject.ToJsonString(options);
 
                 try
                 {
                     File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
+
                     MessageBox.Show("The pattern is saved!");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error saving a pattern");
                     Debug.WriteLine("Error saving a pattern: " + ex.Message);
+
                     MessageBox.Show("Error saving a pattern!");
                 }
             }
             else
             {
-                MessageBox.Show("Befor save your pattern it need have name");
+                MessageBox.Show("Before saving your pattern, it needs a name");
             }
         }
 
@@ -315,7 +323,7 @@ namespace GameOfLife
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show("Failed to load the saved pattern");
             }
 
         }

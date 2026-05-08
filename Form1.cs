@@ -63,7 +63,6 @@ namespace GameOfLife
                         }
                     comboBox1.Items.Add(pattern.name);
                     }
-                    MessageBox.Show("The pattern is loaded!");
                 }
 
             }

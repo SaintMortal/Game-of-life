@@ -2,7 +2,7 @@ namespace GameOfLife
 {
     public static class Constants
     {
-        public const int MAP_SIZE = 50;
+        public const int MAP_SIZE = 80;
 
         public const int CELL_SIZE = 20;
         public const int CELL_SPACING = 21;

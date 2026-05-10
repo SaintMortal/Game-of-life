@@ -19,7 +19,7 @@ namespace GameOfLife
         private Cell[,] cells = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
         private Cell[,] buffer = new Cell[Constants.MAP_SIZE, Constants.MAP_SIZE];
         List<Pattern> patterns = new List<Pattern>();
-        private int GlobalId = 1;
+        private int GlobalId = 0;
 
         bool isPlayingGame = false;
         int glifecounter = 0;
@@ -188,15 +188,38 @@ namespace GameOfLife
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (isPlayingGame)
+            {
+                isPlayingGame = false;
+                LoopTriger.Text = "Start";
+            }
+            if(checkLifeCells() == 0)
+            {
+                MessageBox.Show("There are no life cells to update, please create a pattern with at least one life cell to be able to update it");
+                return;
+            }
             UpdateCells();
         }
         private void ResetHandle_Click(object sender, EventArgs e)
         {
-            ResetThePlayground();
+            if (isPlayingGame)
+            {
+                isPlayingGame = false;
+                LoopTriger.Text = "Start";
+            }
+            if (checkLifeCells() == 0)
+            {
+                MessageBox.Show("There are no life cells to reset, please create a pattern with at least one life cell to be able to reset it");
+            }
+            else
+            {
+                ResetThePlayground();
+            }
         }
 
         private void ResetThePlayground()
         {
+            glifecounter = 0;
             for (int i = 0; i < Constants.MAP_SIZE; i++)
             {
                 for (int j = 0; j < Constants.MAP_SIZE; j++)
@@ -244,88 +267,158 @@ namespace GameOfLife
         }
         private void Save_Click(object sender, EventArgs e)
         {
-            if (InputFormForNaming.Text != "")
+            if (InputFormForNaming.Text.Contains(" "))
             {
-                patterns.Add(new Pattern
-                {
-                    id = ++GlobalId,
-                    name = InputFormForNaming.Text,
-                    Cells = new List<Cell>()
-                });
-
-                Pattern lastPattern = patterns.FindLast(p => true);
-
-                comboBox1.Items.Add(lastPattern.name);
-
-                for (int x = 0; x < Constants.MAP_SIZE; x++)
-                {
-                    for (int y = 0; y < Constants.MAP_SIZE; y++)
-                    {
-                        if (cells[x, y].life)
-                        {
-                            lastPattern.Cells.Add(new Cell
-                            {
-                                x = x,
-                                y = y,
-                                life = true
-                            });
-                        }
-                    }
-                }
-
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                };
-
-                JsonObject jsonObject = new JsonObject
-                {
-                    ["patterns"] = JsonSerializer.SerializeToNode(patterns) 
-                };
-
-                string jsonString = jsonObject.ToJsonString(options);
-
-                try
-                {
-                    File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
-
-                    MessageBox.Show("The pattern is saved!");
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Error saving a pattern: " + ex.Message);
-
-                    MessageBox.Show("Error saving a pattern!");
-                }
+                MessageBox.Show("The pattern name cannot contain spaces, please change the name of your pattern to be able to save it");
+                return;
+            }
+            if (checkLifeCells() == 0)
+            {
+                MessageBox.Show("There are no life cells to save, please create a pattern with at least one life cell to be able to save it");
             }
             else
             {
-                MessageBox.Show("Before saving your pattern, it needs a name");
+                if (InputFormForNaming.Text != "")
+                {
+                    int doublepatternCounter = 0;
+                    foreach (Pattern pattern in patterns)
+                    {
+                        if (String.Compare(pattern.name, InputFormForNaming.Text) == 0)
+                        {
+                            doublepatternCounter++;
+                        }
+                    }
+
+                    if (doublepatternCounter > 0)
+                    {
+                        MessageBox.Show("There are multiple patterns with the same name, please change the name of one of them to avoid confusion");
+                        return;
+                    }
+
+                    patterns.Add(new Pattern
+                    {
+                        id = ++GlobalId,
+                        name = InputFormForNaming.Text,
+                        Cells = new List<Cell>()
+                    });
+
+                    Pattern lastPattern = patterns.FindLast(p => true);
+
+                    comboBox1.Items.Add(lastPattern.name);
+
+                    for (int x = 0; x < Constants.MAP_SIZE; x++)
+                    {
+                        for (int y = 0; y < Constants.MAP_SIZE; y++)
+                        {
+                            if (cells[x, y].life)
+                            {
+                                lastPattern.Cells.Add(new Cell
+                                {
+                                    x = x,
+                                    y = y,
+                                    life = true
+                                });
+                            }
+                        }
+                    }
+
+                    var options = new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    };
+
+                    JsonObject jsonObject = new JsonObject
+                    {
+                        ["patterns"] = JsonSerializer.SerializeToNode(patterns)
+                    };
+
+                    string jsonString = jsonObject.ToJsonString(options);
+
+                    try
+                    {
+                        File.WriteAllText(Constants.PATTERNS_JSON_FILE, jsonString);
+
+                        MessageBox.Show("The pattern is saved!");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Error saving a pattern: " + ex.Message);
+
+                        MessageBox.Show("Error saving a pattern!");
+                    }
+                    InputFormForNaming.Text = "Pattern Name";
+                    InputFormForNaming.ForeColor = Color.Gray;
+                }
+                else
+                {
+                    MessageBox.Show("Before saving your pattern, it needs a name");
+                }
             }
         }
 
         private void LoadHandle_Click(object sender, EventArgs e)
         {
-            ResetThePlayground();
-            foreach (Pattern pattern in patterns)
-            {
-                if (pattern.name == comboBox1.SelectedItem.ToString())
-                {
-                    InitializeThePattern(pattern);
-                }
-            }
-            try
-            {
-                var fileBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
-                var reader = new Utf8JsonReader(fileBytes);
+            
 
-            }
-            catch (Exception ex)
+            if (comboBox1.SelectedItem == null)
             {
-                MessageBox.Show("Failed to load the saved pattern");
+                MessageBox.Show("Please select a pattern to load");
+                return;
+            }
+            else
+            {
+
+
+                ResetThePlayground();
+                foreach (Pattern pattern in patterns)
+                {
+                    if (pattern.name == comboBox1.SelectedItem.ToString())
+                    {
+                        InitializeThePattern(pattern);
+                    }
+                }
+                try
+                {
+                    var fileBytes = File.ReadAllBytes(Constants.PATTERNS_JSON_FILE);
+                    var reader = new Utf8JsonReader(fileBytes);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to load the saved pattern");
+                }
             }
 
         }
 
+        private void InputFormForNaming_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void InputFormForNaming_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (InputFormForNaming.Text == "Pattern Name")
+            {
+                InputFormForNaming.Text = "";
+                InputFormForNaming.ForeColor = Color.Black;
+            }
+        }
+
+        private int checkLifeCells()
+        {
+            int count = 0;
+            for (int x = 0; x < Constants.MAP_SIZE; x++)
+            {
+                for (int y = 0; y < Constants.MAP_SIZE; y++)
+                {
+                    if (cells[x, y].life)
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
     }
 }
